@@ -68,7 +68,7 @@ int get_majority_friend_opinions(int node)
 
     for (int j = 0; j < total_nodes; j++)
     {
-        if (adj[node][j] == 1)
+        if (adj[j][node] == 1)
         {
             if (opinions[j] == 1)
                 count_1++;
