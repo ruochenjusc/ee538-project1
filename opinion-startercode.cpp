@@ -19,7 +19,7 @@ int total_nodes = 0; // We keep track of the total number of nodes based on larg
 std::vector<int> opinions;
 
 // global adjacency matrix initialized later
-std::vector<std::vector<int>> adj;
+std::vector<std::vector<int>> in_neighbors;
 
 // edge list: each row contains {source, target}
 std::vector<std::vector<int>> edge_list;
@@ -27,19 +27,14 @@ std::vector<std::vector<int>> edge_list;
 void build_adj_matrix()
 {
     // (1) make a total_nodes x total_nodes matrix, fill with 0
-    for (int i = 0; i < total_nodes; i++)
-    {
-        vector<int> row;
-        row.resize(total_nodes, 0);
-        adj.push_back(row);
-    }
+    in_neighbors.assign(total_nodes, {});
 
     // (2) go through every edge and mark it as 1 in the matrix
-    for (int i = 0; i < edge_list.size(); i++)
+    for (size_t i = 0; i < edge_list.size(); i++)
     {
         int source = edge_list[i][0];
         int target = edge_list[i][1];
-        adj[source][target] = 1;
+        in_neighbors[target].push_back(source);
     }
 }
 
@@ -66,15 +61,12 @@ int get_majority_friend_opinions(int node)
     int count_0 = 0;
     int count_1 = 0;
 
-    for (int j = 0; j < total_nodes; j++)
+    for (int j : in_neighbors[node])
     {
-        if (adj[j][node] == 1)
-        {
-            if (opinions[j] == 1)
-                count_1++;
-            else
-                count_0++;
-        }
+        if (opinions[j] == 1)
+            count_1++;
+        else
+            count_0++;
     }
 
     if (count_1 > count_0)
